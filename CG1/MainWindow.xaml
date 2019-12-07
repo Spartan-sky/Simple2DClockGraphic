@@ -1,0 +1,119 @@
+﻿<Window x:Class="CG1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CG1"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+	<Canvas ClipToBounds="False">
+		<!-- First, we define reusable resources,
+			 giving each a unique key: -->
+		<Canvas.Resources>
+			<ControlTemplate x:Key="ClockHandTemplate">
+				<Polygon
+					Points="-0.3, -1 -0.2, 8 0, 9 0.2, 8 0.3, -1"
+					Fill="Navy" />
+			</ControlTemplate>
+		</Canvas.Resources>
+		
+		<!-- THE SCENE -->
+		<TextBlock x:Name="DisplayTime"
+			Canvas.Left="12" Canvas.Top="-10"
+			Width="8" Height="5"
+			Text="12:00:00" FontSize="2"/>
+		<Button x:Name="UpdateTimeButton" Click="UpdateTimeClick"
+			Canvas.Left="12" Canvas.Top="-7"
+			Width="8" Height="2.25"
+			BorderThickness=".5" BorderBrush="Black" />
+
+		<Ellipse
+			Canvas.Left="-10.0" Canvas.Top="-10.0"
+			Width="20.0" Height="20.0"
+			Fill="LightGray"
+			Stroke="Black" StrokeThickness=".8" />
+		<Ellipse
+			Canvas.Top="-9" Canvas.Left="-.5"
+			Width="1.0" Height="1.0"
+			Fill="Blue" />
+		<Control Name="MinuteHand"
+				 Template="{StaticResource ClockHandTemplate}">
+			<Control.RenderTransform>
+				<TransformGroup>
+					<ScaleTransform ScaleY="0.9" CenterX="0" CenterY="0" />
+					<!-- This is the default position -->
+					<RotateTransform Angle="180" CenterX="0" CenterY="0" />
+					<!-- Additional rotation for animation to show actual time: -->
+					<RotateTransform x:Name="ActualTimeMinute" Angle="0"/>
+				</TransformGroup>
+			</Control.RenderTransform>
+		</Control>
+
+		<Control Name="HourHand"
+				 Template="{StaticResource ClockHandTemplate}">
+			<Control.RenderTransform>
+				<TransformGroup>
+					<ScaleTransform ScaleX="1.7" ScaleY="0.7" CenterX="0" CenterY="0" />
+					<!-- This is the default position -->
+					<RotateTransform Angle="180" CenterX="0" CenterY="0" />
+					<!-- Additional rotation for animation to show actual time: -->
+					<RotateTransform x:Name="ActualTimeHour" Angle="0"/>
+				</TransformGroup>
+			</Control.RenderTransform>
+		</Control>
+		<Control Name="SecondHand"
+				 Template="{StaticResource ClockHandTemplate}">
+			<Control.RenderTransform>
+				<TransformGroup>
+					<ScaleTransform ScaleX=".8" CenterX="0" CenterY="0" />
+					<!-- This is the default position -->
+					<RotateTransform Angle="180" CenterX="0" CenterY="0" />
+					<!-- Additional rotation for animation to show actual time: -->
+					<RotateTransform x:Name="ActualTimeSecond" Angle="0"/>
+				</TransformGroup>
+			</Control.RenderTransform>
+		</Control>
+
+		<!-- DISPLAY TRANSFORMATION -->
+		<Canvas.RenderTransform>
+			<!-- The content of a RenderTransform is a TransformGroup
+				 acting as a container for ordered transform elements. -->
+			<TransformGroup>
+				<!-- Use floating-point scale factors:
+					 1.0 to represent 100% , 0.5 to represent 50%, etc. -->
+				<ScaleTransform ScaleX="18" ScaleY="18"
+								CenterX="0" CenterY="0" />
+				<TranslateTransform X="400" Y="225" />
+			</TransformGroup>
+		</Canvas.RenderTransform>
+		
+		<!-- This triggers the clock to work when in view -->
+		<Canvas.Triggers>
+			<EventTrigger RoutedEvent="FrameworkElement.Loaded">
+				<BeginStoryboard>
+					<Storyboard>
+						<DoubleAnimation
+                            x:Name="HourDoubleAnimation"
+							Storyboard.TargetName="ActualTimeHour"
+							Storyboard.TargetProperty="Angle"
+							From="0.0" To="360.0"
+							Duration="01:00:00" RepeatBehavior="Forever" />
+						<DoubleAnimation
+                            x:Name="MinuteDoubleAnimation"
+							Storyboard.TargetName="ActualTimeMinute"
+							Storyboard.TargetProperty="Angle"
+							From="0.0" To="360.0"
+							Duration="00:10:00" RepeatBehavior="Forever" />
+						<DoubleAnimation
+                            x:Name="SecondDoubleAnimation"
+							Storyboard.TargetName="ActualTimeSecond"
+							Storyboard.TargetProperty="Angle"
+							From="0.0" To="360.0"
+							Duration="00:00:10" RepeatBehavior="Forever" />
+					</Storyboard>
+				</BeginStoryboard>
+			</EventTrigger>
+		</Canvas.Triggers>
+		
+	</Canvas>
+</Window>
